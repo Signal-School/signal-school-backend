@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const academicDetailsController = require('../controllers/AcademicDetailsController');
-
+const SubjectChecker = require('../middleware/DetailChecker');
 // Create a new AcademicDetails
 
 router.post('/', academicDetailsController.createAcademicDetails);
