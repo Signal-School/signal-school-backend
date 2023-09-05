@@ -3,7 +3,7 @@
 
 const Remark = require('../models/Remark');
 const Student = require('../models/Student');
-const SubjectChecker = require('../utils/MatchSubject');
+const {SubjectChecker} = require('../utils/MatchSubject');
 
 
 const remarkChecker = (req, res, next) => {
@@ -27,24 +27,26 @@ const remarkChecker = (req, res, next) => {
 }
 
 const subjectChecker = (req, res, next) => {
+    const subjectId = req.body.subjectId; // assuming subjectId is in the request body
     try {
-        SubjectChecker(subjectId)
-        .then(()=>{
-            next();
+        SubjectChecker(subjectId) // Call the SubjectChecker utility function
+        .then(() => {
+            next(); // If subject is found, continue to the next middleware
         })
-        .catch(()=>{
+        .catch(() => {
             res.status(404).json({
                 message: "Subject not found!"
             });
-        })
-    }
-    catch(error){
+        });
+    } catch (error) {
         console.error(error);
         res.status(500).json({
             message: "Internal Server Error"
         });
     }
 }
+
+
 
 
 

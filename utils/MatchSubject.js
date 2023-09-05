@@ -1,7 +1,7 @@
 const Student = require('../models/Student');
 const Subject = require('../models/Subject');
 
-const SubjectChecker = (subjectId) => {
+exports.SubjectChecker = (subjectId) => {
     return new Promise((resolve, reject) => {
         Subject.findById(subjectId)
             .then((subject) => {
@@ -18,4 +18,3 @@ const SubjectChecker = (subjectId) => {
     });
 }
 
-module.exports = {SubjectChecker};
