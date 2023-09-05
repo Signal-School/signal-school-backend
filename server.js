@@ -10,12 +10,14 @@ const StudentRoute = require('./routes/student')
 const TeacherRoute = require('./routes/teacher')
 const SchoolRoute = require('./routes/school')
 const AuthRoute = require('./routes/auth')
-
+const SubjectRoute = require('./routes/subject')
+const RemarkRoute = require('./routes/remark')
+const AcademicDetailsRoute = require('./routes/academicDetails')
 //mongoose.connect('mongodb://0.0.0.0:27017/testdb', {useNewUrlParser: true, useUnifiedTopology: true})
 
-// mongoose.connect(process.env.DB_URL, {useNewUrlParser: true, useUnifiedTopology: true})
+ mongoose.connect(process.env.DB_URL, {useNewUrlParser: true, useUnifiedTopology: true})
 
-mongoose.connect(process.env.DB_URL, {useNewUrlParser: true, useUnifiedTopology: true})
+//mongoose.connect(process.env.DB_URL, {useNewUrlParser: true, useUnifiedTopology: true})
 
 
 
@@ -45,7 +47,7 @@ app.use(express.static('public'));
 
 
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT || 5000
 
 app.listen(PORT, ()=> {
     console.log(`Server is running on port ${PORT}`)
@@ -54,6 +56,9 @@ app.listen(PORT, ()=> {
 app.use('/api/student', StudentRoute)
 app.use('/api/teacher', TeacherRoute)
 app.use('/api/school', SchoolRoute)
+app.use('/api/subject', SubjectRoute)
+app.use('/api/remark', RemarkRoute)
+app.use('/api/academicDetails', AcademicDetailsRoute)
 app.use('/', AuthRoute)
 
 

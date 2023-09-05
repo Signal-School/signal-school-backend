@@ -39,7 +39,8 @@ const store = (req, res, next) => {
         age: req.body.age,
         dob: req.body.dob,
         address: req.body.address,
-        schoolId: req.body.schoolId
+        schoolId: req.body.schoolId,
+        subjectIds: req.body.subjectIds
     })
     student.save()
     .then(response=>{
@@ -63,9 +64,10 @@ const update = (req, res, next) => {
         age: req.body.age,
         dob: req.body.dob,
         address: req.body.address,
-        schoolId: req.body.schoolId
+        schoolId: req.body.schoolId,
+        subjectIds: req.body.subjectIds
     }
-
+    console.log(updateData)
     Student.findByIdAndUpdate(studentId, {$set: updateData})
     .then(()=>{
         res.json({

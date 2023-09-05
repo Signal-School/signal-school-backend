@@ -19,7 +19,12 @@ const studentSchema = new Schema({
     },
     schoolId: {
         type: String
-    }
+    },
+    subjectIds: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Subject'
+    }]
+    
 }, {timeStamps: true})
 
 
