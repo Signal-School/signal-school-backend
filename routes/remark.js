@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const remarkController = require('../controllers/RemarkController');
-const SubjectChecker = require('../middleware/DetailChecker');
+const DetailChecker = require('../middleware/DetailChecker');
+
 // Create a new Remark
-router.post('/', SubjectChecker.remarkChecker, remarkController.createRemark);
+router.post('/', DetailChecker.subjectChecker, remarkController.createRemark);
 
 // Get all Remarks
 router.get('/', remarkController.getAllRemarks);
