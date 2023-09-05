@@ -22,6 +22,7 @@ const authenticate = (req, res, next) => {
             })
         }
     }
+    next()
 }
 
 // const teacherActionAuthenticate = (req, res, next) => {
