@@ -13,6 +13,7 @@ const AuthRoute = require('./routes/auth')
 const SubjectRoute = require('./routes/subject')
 const RemarkRoute = require('./routes/remark')
 const AcademicDetailsRoute = require('./routes/academicDetails')
+const AttendanceRoute = require('./routes/attendance')
 //mongoose.connect('mongodb://0.0.0.0:27017/testdb', {useNewUrlParser: true, useUnifiedTopology: true})
 
  mongoose.connect(process.env.DB_URL, {useNewUrlParser: true, useUnifiedTopology: true})
@@ -59,6 +60,7 @@ app.use('/api/school', SchoolRoute)
 app.use('/api/subject', SubjectRoute)
 app.use('/api/remark', RemarkRoute)
 app.use('/api/academicDetails', AcademicDetailsRoute)
+app.use('/api/attendance', AttendanceRoute)
 app.use('/', AuthRoute)
 
 
