@@ -16,7 +16,7 @@ exports.StudentDetails = async (studentData) => {
                 // console.log(subjectData)
                 let subject = {}
                 subject["name"] = subjectData.name
-                subject["id"] = subjectData._id
+                subject["_id"] = subjectData._id
                 subjectList.push(subject)
             }
         }

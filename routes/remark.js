@@ -4,7 +4,7 @@ const remarkController = require('../controllers/RemarkController');
 const DetailChecker = require('../middleware/DetailChecker');
 
 // Create a new Remark
-router.post('/', DetailChecker.subjectChecker, remarkController.createRemark);
+router.post('/', remarkController.createRemark);
 
 // Get all Remarks
 router.get('/', remarkController.getAllRemarks);
