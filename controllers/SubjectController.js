@@ -37,6 +37,7 @@ const show = (req, res, next) => {
 const store = (req, res, next) => {
     let subject = new Subject({
         name: req.body.name,
+        class: req.body.class,
         details: req.body.details
     })
     subject.save()
@@ -52,22 +53,12 @@ const store = (req, res, next) => {
     })
 }
 
-
-
-// const subjectSchema = new Schema({
-//     name: {
-//         type: String
-//     },
-//     details: {
-//         type: String
-//     }
-// })
-
 //update a subject
 const update = (req, res, next) => {
     let subjectId = req.body.subjectId
     let updateData = {
         name: req.body.name,
+        class: req.body.class,
         details: req.body.details
     }
     Subject.findByIdAndUpdate(subjectId, {$set: updateData})

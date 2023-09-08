@@ -5,6 +5,9 @@ const subjectSchema = new Schema({
     name: {
         type: String
     },
+    class: {
+        type: String
+    },
     details: {
         type: String
     }

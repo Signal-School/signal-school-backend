@@ -3,7 +3,6 @@
 
 const Remark = require('../models/Remark');
 const Student = require('../models/Student');
-const {SubjectChecker} = require('../utils/MatchSubject');
 
 
 const remarkChecker = (req, res, next) => {
