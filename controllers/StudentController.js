@@ -7,6 +7,7 @@ const Class = require('../models/Class');
 const createStudent = async (req, res) => {
     try {
         if (!req.admin) {
+            console.log(req.admin);
             throw new Error('You are not authorized to access this route');
         }
         if (!req.admin.currentSchool || req.admin.currentSchool === null) {

@@ -5,6 +5,8 @@ const Organization = require('../models/Organization');
 //Create Organization
 const createOrganization = async (req, res) => {
     try {
+        // console.log(req.admin)
+        
         if (!req.admin) {
             throw new Error('You are not authorized to access this route');
         }

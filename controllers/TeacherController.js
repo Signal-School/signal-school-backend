@@ -7,7 +7,7 @@ const teacherLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
         const teacher = await Teacher.findOne({ where: { email } });
-        if (teacher && (await bcrypt.compare(password, teacher.password))) {
+        if (teacher && (teacher.password == password)) {
             const accessToken = jwt.sign({ email: teacher.email, id: teacher.id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE_TIME });
             res.status(200).json({ accessToken });
         } else {
@@ -131,6 +131,7 @@ const deleteTeacher = async (req, res) => {
 }
 
 module.exports = {
+    teacherLogin,
     createTeacher,
     getAllTeachers,
     getTeacherById,

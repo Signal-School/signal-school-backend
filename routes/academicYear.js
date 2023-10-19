@@ -1,12 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const AcademicYearController = require('../controllers/AcademicYearController');
+const adminConstraint = require('../middlewares/adminConstraint');
 
-
-router.post('/academicYear/create', AcademicYearController.createAcademicYear);
+router.post('/academicYear/create', adminConstraint,AcademicYearController.createAcademicYear);
 router.get('/academicYear/getAll', AcademicYearController.getAllAcademicYears);
 router.get('/academicYear/get/:id', AcademicYearController.getAcademicYearById);
-router.put('/academicYear/update/:id', AcademicYearController.updateAcademicYear);
-router.delete('/academicYear/delete/:id', AcademicYearController.deleteAcademicYear);
+router.put('/academicYear/update/:id', adminConstraint,AcademicYearController.updateAcademicYear);
+router.delete('/academicYear/delete/:id', adminConstraint,AcademicYearController.deleteAcademicYear);
 
 module.exports = router;

@@ -5,11 +5,11 @@ const tokenVerify = require('../middlewares/tokenVerify')
 const AdminController = require('../controllers/AdminController')
 
 router.post('/admin/register', AdminController.AdminRegister)
-router.post('/admin/login',tokenVerify, AdminController.AdminLogin)
+router.post('/admin/login' , adminConstraint ,AdminController.AdminLogin)
 router.get('/admin/getAll', AdminController.AdminRetrieve)
 router.get('/admin/get/:id', AdminController.AdminRetrieveById)
-router.put('/admin/update/:id', AdminController.AdminUpdate)
-router.delete('/admin/delete/:id', AdminController.AdminDelete)
+router.put('/admin/update/:id', adminConstraint ,AdminController.AdminUpdate)
+router.delete('/admin/delete/:id',adminConstraint, AdminController.AdminDelete)
 
 
 module.exports = router

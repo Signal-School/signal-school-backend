@@ -7,6 +7,7 @@ const Subject = require('./Subject');
 const StudentSubject = require('./StudentSubject');
 const AcademicYear = require('./AcademicYear');
 const Class = require('./Class');
+const StudentTimeline = require('./StudentTimeline');
 const sequelize = require('../config/db');
 const Sequelize = require('sequelize');
 
@@ -46,6 +47,9 @@ StudentSubject.belongsTo(Class);
 
 Teacher.belongsToMany(School, { through: 'TeacherSchool' });
 School.belongsToMany(Teacher, { through: 'TeacherSchool' });
+
+StudentTimeline.belongsTo(Student);
+
 
 
 
