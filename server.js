@@ -26,7 +26,7 @@ const SchoolRoute = require('./routes/school');
 const TeacherRoute = require('./routes/teacher');
 const StudentRoute = require('./routes/student');
 const SubjectRoute = require('./routes/subject');
-const AcademicYearRoute = require('./routes/academicyear');
+const AcademicYearRoute = require('./routes/academicYear');
 const ClassRoute = require('./routes/class');
 const StudentSubjectRoute = require('./routes/studentsubject');
 
