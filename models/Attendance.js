@@ -14,7 +14,7 @@ const attendanceSchema = new Schema({
         type: Date
     },
     progress: {
-        type: String
+        type: Number
     },
     status: {
         type: Boolean
