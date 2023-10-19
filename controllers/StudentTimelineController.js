@@ -1,4 +1,7 @@
 const StudentTimeline = require('../models/StudentTimeline');
+const dotenv = require('dotenv');
+const AWS = require("aws-sdk");
+
 
 // Create Student Timeline
 const createStudentTimeline = async (req, res) => {
@@ -6,6 +9,32 @@ const createStudentTimeline = async (req, res) => {
         const { date, progress, attendanceStatus, studentId } = req.body;
         if (!date || !progress || !attendanceStatus || !studentId) {
             return res.status(400).json({ error: 'Please provide all required fields' });
+        }
+
+        if (req.file) {
+            dotenv.config();
+            const s3 = new AWS.S3({
+                accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+            });
+            const params = {
+                Bucket: process.env.AWS_BUCKET_NAME,
+                Key: `${Date.now()}-${req.file.originalname}`,
+                Body: req.file.buffer,
+            };
+            s3.upload(params, async (error, data) => {
+                if (error) {
+                    return res.status(500).json({ error: error.message });
+                }
+                const studentTimeline = await StudentTimeline.create({
+                    date,
+                    progress,
+                    attendanceStatus,
+                    image: data.Location,
+                    StudentId: studentId,
+                });
+                return res.status(201).json({ message: 'Student timeline created successfully', studentTimeline });
+            });
         }
 
         const studentTimeline = await StudentTimeline.create({

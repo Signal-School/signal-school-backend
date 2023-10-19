@@ -5,7 +5,7 @@ const tokenVerify = require('../middlewares/tokenVerify')
 const AdminController = require('../controllers/AdminController')
 
 router.post('/admin/register', AdminController.AdminRegister)
-router.post('/admin/login' , adminConstraint ,AdminController.AdminLogin)
+router.post('/admin/login' ,AdminController.AdminLogin)
 router.get('/admin/getAll', AdminController.AdminRetrieve)
 router.get('/admin/get/:id', AdminController.AdminRetrieveById)
 router.put('/admin/update/:id', adminConstraint ,AdminController.AdminUpdate)

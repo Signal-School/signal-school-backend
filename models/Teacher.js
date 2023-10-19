@@ -23,5 +23,5 @@ const Teacher = sequelize.define('Teacher', {
 });
 
 
-
+Teacher.belongsToMany(School, { through: 'TeacherSchool' });
 module.exports = Teacher;
