@@ -1,2 +1,0 @@
-# signal-school-backend
- 

@@ -1,20 +1,11 @@
-const express = require('express');
-const router = express.Router();
-const subjectController = require('../controllers/SubjectController');
+const expess = require('express');
+const router = expess.Router();
+const SubjectController = require('../controllers/SubjectController');
 
-// List all subjects
-router.get('/', subjectController.index);
-
-// Show a single subject by ID
-router.get('/:id', subjectController.show);
-
-// Create a new subject
-router.post('/', subjectController.store);
-
-// Update a subject by ID
-router.put('/:id', subjectController.update);
-
-// Delete a subject by ID
-router.delete('/:id', subjectController.destroy);
+router.post('/subject/create', SubjectController.createSubject);
+router.get('/subject/getAll', SubjectController.getAllSubjects);
+router.get('/subject/get/:id', SubjectController.getSubjectById);
+router.put('/subject/update/:id', SubjectController.updateSubject);
+router.delete('/subject/delete/:id', SubjectController.deleteSubject);
 
 module.exports = router;

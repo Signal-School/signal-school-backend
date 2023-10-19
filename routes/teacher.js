@@ -1,13 +1,14 @@
 const express = require('express')
+const adminConstraint = require('../middlewares/adminConstraint')
 const router = express.Router()
 
 const TeacherController = require('../controllers/TeacherController')
-const authenticate = require('../middleware/authenticate')
 
-router.get('/', authenticate.authenticate, TeacherController.index)
-router.post('/show', authenticate.authenticate, TeacherController.show)
-router.post('/store',  TeacherController.store)
-router.post('/update', authenticate.authenticate, TeacherController.update)
-router.post('/delete', authenticate.authenticate, TeacherController.destroy)
+router.post('/teacher/create', adminConstraint, TeacherController.createTeacher)
+router.get('/teacher/getAll', TeacherController.getAllTeachers)
+router.get('/teacher/get/:id', TeacherController.getTeacherById)
+router.put('/teacher/update/:id', TeacherController.updateTeacher)
+router.delete('/teacher/delete/:id', TeacherController.deleteTeacher)
+
 
 module.exports = router

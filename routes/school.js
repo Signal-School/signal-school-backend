@@ -1,15 +1,16 @@
-const express = require('express');
-const router = express.Router();
+const express = require('express')
+const adminConstraint = require('../middlewares/adminConstraint')
+const tokenVerify = require('../middlewares/tokenVerify')
+const router = express.Router()
 
-const SchoolController = require('../controllers/SchoolController');
-const authenticate = require('../middleware/authenticate');
+const SchoolController = require('../controllers/SchoolController')
 
-router.post('/', authenticate.authenticate, SchoolController.index);
-router.post('/show', authenticate.authenticate, SchoolController.show);
-router.post('/add', authenticate.authenticate, SchoolController.store);
-router.post('/update', authenticate.authenticate, SchoolController.update);
-router.post('/delete', authenticate.authenticate, SchoolController.destroy);
-router.post('/change', authenticate.authenticate, SchoolController.UpdateCurrSchool);
+router.post('/school/create',adminConstraint, SchoolController.createSchool)
+router.get('/school/getAll',tokenVerify , SchoolController.getAllSchool)
+router.get('/school/get/:id', SchoolController.getSchoolById)
+router.put('/school/update/:id', SchoolController.updateSchool)
+router.delete('/school/delete/:id', SchoolController.deleteSchool)
 
-module.exports = router;
 
+
+module.exports = router

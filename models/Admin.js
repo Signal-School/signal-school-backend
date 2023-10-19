@@ -1,21 +1,27 @@
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/db');
+const Organization = require('./Organization');
 
-const AdminSchema = new Schema({
-    name: {
-        type: String 
-    },
-    email: {
-        type: String
-    },
-    phone: {
-        type: String
-    },
-    password: {
-        type: String
-    }
+const Admin = sequelize.define('Admin', {
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  email: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+  },
+  password: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  currentSchool: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+});
 
-}, {timestamps: true})
+Admin.belongsTo(Organization);
 
-const Admin = mongoose.model('Admin', AdminSchema)
-module.exports = Admin
+module.exports = Admin;

@@ -1,33 +1,24 @@
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/db');
+const AcademicYear = require('./AcademicYear');
+const Class = require('./Class');
 
-const studentSchema = new Schema({
-    name: {
-        type: String
-    },
-    class: {
-        type: String
-    },
-    age: {
-        type: Number 
-    },
-    dob: {
-        type: Date
-    },
-    address: {
-        type: String
-    },
-    schoolId: {
-        type: String
-    },
-    subjectIds: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Subject'
-    }]
-    
-}, {timeStamps: true})
+const Student = sequelize.define('Student', {
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  age: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  grade: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+});
 
+Student.belongsTo(AcademicYear);
+Student.belongsTo(Class);
 
-const Student = mongoose.model('Student', studentSchema)
-
-module.exports = Student
+module.exports = Student;

@@ -1,26 +1,19 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
-const Organization = require('./Organization');
 
-const School = sequelize.define('School', {
+const Organization = sequelize.define('Organization', {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  address: {
+  headOffice: {
     type: DataTypes.STRING,
     allowNull: true,
   },
   contactNumber: {
     type: DataTypes.STRING,
     allowNull: true,
-  },
-  location: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
+  }
 });
 
-School.belongsTo(Organization);
-
-module.exports = School;
+module.exports = Organization;

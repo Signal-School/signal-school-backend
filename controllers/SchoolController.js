@@ -1,234 +1,130 @@
-const School = require('../models/School');
-const CurrSchool = require('../models/CurrSchool');
-const { response } = require('express');
-
-// Show list of schools
-const index = (req, res, next) => {
-  //   console.log(req.body);
-  //   School.find({adminId: req.body.adminId})
-  //     .then(response => {
-  //       res.json({
-  //         schools: response
-  //       });
-  //     })
-  //     .catch(error => {
-  //       res.json({
-  //         message: 'An error occurred!'
-  //       });
-  //     });
-  // };
-  console.log(req.headers);
-  if (req.body.adminId) {
-    School.find({ adminId: req.body.adminId })
-      .then(response => {
-        res.json({
-          schools: response
-        })
-      })
-      .catch(error => {
-        res.json({
-          message: 'An error occurred!'
-        })
-      })
-  } else {
-    //no adminId response
-    res.json({
-      message: 'No adminId'
-    })
-  }
-};
+const Admin = require("../models/Admin");
+const School = require("../models/School");
 
 
-// Show single school if adminId matches
-const show = (req, res, next) => {
-  let schoolId = req.body.schoolId;
-  let adminId = req.body.adminId;
-  console.log(schoolId);
-  console.log(adminId);
-
-  School.find({ _id: schoolId, adminId: adminId })
-    .then(response => {
-      if (response.length > 0) {
-        res.json({
-          school: response
-        });
-      } else {
-        res.json({
-          message: 'School Not found.',
-          schoolId: schoolId,
-          adminId: adminId
-        });
-      }
-    })
-    .catch(error => {
-      res.json({
-        message: 'An error occurred!'
-      });
-    });
-};
-
-
-
-
-
-// Store a new school
-const store = (req, res, next) => {
-  let school = new School({
-    name: req.body.name,
-    location: req.body.location,
-    adminId: req.body.adminId
-  });
-  school
-    .save()
-    // .then(response => {
-    //   //update currSchool
-    //   let currSchool = new CurrSchool({
-    //     schoolId: response._id,
-    //     adminId: response.adminId
-    //   });
-    //   currSchool
-    //     .save()
-    //     .then(response => {
-
-    //   res.json({
-    //     message: 'School added successfully!'
-    //   });
-    .then(responseA => {
-      let currSchool = new CurrSchool({
-        schoolId: responseA._id,
-        adminId: responseA.adminId
-      });
-      currSchool
-        .save()
-        .then(response => {
-          res.json({
-            message: 'School added successfully!',
-            school: responseA
-          });
+//create a SCHOOL
+const createSchool = async (req, res) => {
+    try {
+        if (!req.admin) {
+            throw new Error('You are not authorized to access this route');
         }
-        )
-
-
-    })
-    .catch(error => {
-      res.json({
-        message: 'An error occurred!'
-      });
-    });
-};
-
-// Update a school
-const update = (req, res, next) => {
-  let schoolId = req.params.id;
-  let updateData = {
-    name: req.body.name,
-    location: req.body.location,
-    adminId: req.body.adminId
-  };
-
-  School.findByIdAndUpdate(schoolId, { $set: updateData })
-    .then(() => {
-      res.json({
-        message: 'School updated successfully!'
-      });
-    })
-    .catch(error => {
-      res.json({
-        message: 'An error occurred!'
-      });
-    });
-};
-
-// Delete a school
-// const destroy = (req, res, next) => {
-//   let schoolId = req.params.id;
-//   School.findByIdAndRemove(schoolId)
-//     .then(() => {
-//       res.json({
-//         message: 'School deleted successfully!'
-//       });
-//     })
-//     .catch(error => {
-//       res.json({
-//         message: 'An error occurred!'
-//       });
-//     });
-// };
-//delete a school if adminId matches
-const destroy = (req, res, next) => {
-  let schoolId = req.params.schoolId;
-  let adminId = req.params.adminId;
-  School.findOneAndRemove({ adminId: adminId, _id: schoolId })
-    .then(() => {
-      res.json({
-        message: 'School deleted successfully!'
-      });
-    })
-    .catch(error => {
-      res.json({
-        message: 'An error occurred!'
-      });
-    });
-};
-
-const CurrSchoolSet = (req, res, next) => {
-  let schoolId = req.body.schoolId;
-  let adminId = req.body.adminId;
-  let currSchool = new CurrSchool({
-    schoolId: schoolId,
-    adminId: adminId
-  });
-  currSchool
-    .save()
-    .then(response => {
-      res.json({
-        message: 'CurrSchool added successfully!'
-      });
-    })
-    .catch(error => {
-      res.json({
-        message: 'An error occurred!'
-      });
-    });
-};
-
-const UpdateCurrSchool = (req, res, next) => {
-  let schoolId = req.body.schoolId;
-  let adminId = req.body.adminId;
-  let updateData = {
-    schoolId: schoolId,
-    adminId: adminId
-  };
-  CurrSchool.findOneAndUpdate({ adminId: adminId }, { $set: updateData })
-    .then(() => {
-      School.findById(schoolId)
-        .then(response => {
-          res.json({
-            message: 'CurrSchool updated successfully!',
-            school: response
-          });
-        })
-        .catch(error => {
-          res.json({
-            message: 'An error occurred!'
-          });
+        if (!req.admin.OrganizationId || req.admin.OrganizationId === null) {
+            throw new Error('Create an organization first');
+        }
+        const name = req.body.name;
+        const address = req.body.address;
+        const contactNumber = req.body.contactNumber;
+        const location = req.body.location;
+        if (!name || !address || !contactNumber || !location) {
+            throw new Error('All fields are required');
+        }
+        const school = await School.create({
+            name: name,
+            address: address,
+            contactNumber: contactNumber,
+            location: location,
+            OrganizationId: req.admin.OrganizationId
         });
-    })
-    .catch(error => {
-      res.json({
-        message: 'An error occurred!'
-      });
-    });
-};
+        await Admin.update({currentSchool: school.id}, {where: {id: req.admin.id}}); 
+        return res.status(201).json({message: 'School created successfully', school});
 
+    } catch (error) {
+        return res.status(500).json({error: error.message})
+    }
+}
+
+//Retrieve list of all Schools
+const getAllSchool = async (req, res) => {
+    try {
+        if (!req.admin && !req.teacher) {
+            throw new Error('You are not authorized to access this route');
+        }
+        let schools;
+        if (req.admin) {
+            schools = await School.findAll({where: {OrganizationId: req.admin.OrganizationId}});
+        }
+        //get teacher school from teacherschool table
+
+        return res.status(200).json({schools});
+    }
+    catch (error) {
+        return res.status(500).json({error: error.message})
+    }
+}
+
+//Retrieve a single School by ID
+const getSchoolById = async (req, res) => {
+    try {
+        if (!req.admin || !req.teacher) {
+            throw new Error('You are not authorized to access this route');
+        }
+        const id = req.params.id;
+        const school = await School.findOne({where: {id: id}});
+        if (!school) {
+            throw new Error('School not found');
+        }
+        return res.status(200).json({school});
+    }
+    catch (error) {
+        return res.status(500).json({error: error.message})
+    }
+}
+
+//Update a School
+const updateSchool = async (req, res) => {
+    try {
+        if (!req.admin) {
+            throw new Error('You are not authorized to access this route');
+        }
+        const id = req.params.id;
+        const school = await School.findOne({where: {id: id}});
+        if (!school) {
+            throw new Error('School not found');
+        }
+        const name = req.body.name;
+        const address = req.body.address;
+        const contactNumber = req.body.contactNumber;
+        const location = req.body.location;
+        if (!name || !address || !contactNumber || !location) {
+            throw new Error('All fields are required');
+        }
+        await School.update({
+            name: name,
+            address: address,
+            contactNumber: contactNumber,
+            location: location
+        }, {where: {id: id}});
+        return res.status(200).json({message: 'School updated successfully'});
+    }
+    catch (error) {
+        return res.status(500).json({error: error.message})
+    }
+}
+
+//Delete a School
+const deleteSchool = async (req, res) => {
+    try {
+        if (!req.admin) {
+            throw new Error('You are not authorized to access this route');
+        }
+        const id = req.params.id;
+        const school = await School.findOne({where: {id: id}});
+        if (!school) {
+            throw new Error('School not found');
+        }
+        await school.destroy();
+        return res.status(200).json({message: 'School deleted successfully'});
+    }
+    catch (error) {
+        return res.status(500).json({error: error.message})
+    }
+}
 
 
 module.exports = {
-  index,
-  show,
-  store,
-  update,
-  destroy,
-  CurrSchoolSet,
-  UpdateCurrSchool
-};
+    createSchool,
+    getAllSchool,
+    getSchoolById,
+    updateSchool,
+    deleteSchool
+}
