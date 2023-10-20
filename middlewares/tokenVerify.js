@@ -6,9 +6,7 @@ const Teacher = require('../models/Teacher');
 module.exports = async (req, res, next) => {
     try {
         const token = req.headers.authorization.split(' ')[1];
-        console.log(token);
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-        console.log(decodedToken);
         const admin = await Admin.findOne({ where: { email: decodedToken.email } });
         const teacher = await Teacher.findOne({ where: { email: decodedToken.email } });
         if (!admin && !teacher) {
