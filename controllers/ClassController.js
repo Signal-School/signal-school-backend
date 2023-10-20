@@ -50,12 +50,12 @@ const getAllClasses = async (req, res) => {
 //Retrieve a single class by ID
 const getClassById = async (req, res) => {
     try {
-        if (!req.admin) {
+        if (!req.admin || !req.teacher) {
             throw new Error('You are not authorized to access this route');
         }
         const classId = req.params.id;
-        const Class = await Class.findOne({ where: { id: classId } });
-        return res.status(200).json({ Class });
+        const classData = await Class.findOne({ where: { id: classId } });
+        return res.status(200).json({ classData });
     }
     catch (error) {
         return res.status(500).json({ error: error.message })

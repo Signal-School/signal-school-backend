@@ -38,14 +38,17 @@ const createStudent = async (req, res) => {
 //Retrieve list of all students
 const getAllStudents = async (req, res) => {
     try {
-        if (!req.admin) {
+        if (!req.admin || !req.teacher) {
             throw new Error('You are not authorized to access this route');
         }
         let students;
         if (req.admin) {
             students = await Student.findAll({ where: { currentSchool: req.admin.currentSchool } });
         }
-        //get teacher school from teacherschool table
+        if(req.teacher){
+            students = await Student.findAll({ where: { currentSchool: req.teacher.currentSchool } });
+        }
+        
 
         return res.status(200).json({ students });
     }
