@@ -1,15 +1,30 @@
 const Teacher = require("../models/Teacher");
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const School = require("../models/School");
 
 //Teacher Login
 const teacherLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
-        const teacher = await Teacher.findOne({ where: { email } });
-        if (teacher && (teacher.password == password)) {
+        //Teacher.belongsToMany(School, { through: 'TeacherSchool' });
+        
+        const teacher = await Teacher.findOne({ where: { email: email }, include: { model: School} });
+        //update teacher password by bycrypting
+        if (teacher && await bcrypt.compare(password, teacher.password)) {
             const accessToken = jwt.sign({ email: teacher.email, id: teacher.id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE_TIME });
-            res.status(200).json({ accessToken });
+            // res.status(200).json({ accessToken });
+            //creent school data is school data from teacher.school where teacher.currentSchool = teacher.school.id
+            const currentSchoolData = teacher.Schools.filter(school => school.id === teacher.currentSchool);
+            const data = {
+                accessToken: accessToken,
+                id: teacher.id,
+                name: teacher.name,
+                email: teacher.email,
+                currentSchool: teacher.currentSchool,
+                currentSchoolData: currentSchoolData[0]
+            }
+            res.status(200).json({message: 'Login successful', data: data});
         } else {
             res.status(401).json({ error: 'Invalid email or password' });
         }
@@ -38,6 +53,12 @@ const createTeacher = async (req, res) => {
             // use email as password
             password = email;
         }
+
+        //hash password
+        const salt = await bcrypt.genSalt(10);
+        password = await bcrypt.hash(password, salt);
+
+
 
         const teacher = await Teacher.create({
             name: name,

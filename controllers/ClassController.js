@@ -13,11 +13,12 @@ const createClass = async (req, res) => {
     if (!name) {
       throw new Error('All fields are required');
     }
-    const Class = await Class.create({
+    const newClass = await Class.create({
       name: name,
-      SchoolId: req.admin.currentSchool
+      SchoolId: req.admin.currentSchool,
+      AcademicYearId: req.body.AcademicYearId
     });
-    return res.status(201).json({ message: 'Class created successfully', Class });
+    return res.status(201).json({ message: 'Class created successfully', newClass });
 
   } catch (error) {
     return res.status(500).json({ error: error.message })

@@ -17,6 +17,4 @@ const AcademicYear = sequelize.define('AcademicYear', {
   },
 });
 
-AcademicYear.belongsTo(Class);
-
 module.exports = AcademicYear;

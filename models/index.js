@@ -33,8 +33,10 @@ Class.belongsTo(School);
 School.hasMany(Subject);
 Subject.belongsTo(School);
 
-Class.hasMany(AcademicYear);
-AcademicYear.belongsTo(Class);
+// Class.hasMany(AcademicYear);
+// AcademicYear.belongsTo(Class);
+AcademicYear.hasMany(Class);
+Class.belongsTo(AcademicYear);
 
 Class.hasMany(Student);
 Student.belongsTo(Class);
