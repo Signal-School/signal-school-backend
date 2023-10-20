@@ -1,6 +1,22 @@
 const StudentTimeline = require('../models/StudentTimeline');
 const dotenv = require('dotenv');
 const AWS = require("aws-sdk");
+// const dotenv = require('dotenv');
+const { v4: uuidv4 } = require('uuid');
+
+//CONFIG FOR THE UPLOAD
+dotenv.config();
+
+const s3 = new AWS.S3({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+});
+
+const generateS3Key = (originalFileName) => {
+    const uniqueId = uuidv4();
+    const fileExtension = originalFileName.split('.')[1];
+    return `${uniqueId}.${fileExtension}`;
+};
 
 
 // Create Student Timeline
@@ -10,114 +26,118 @@ const createStudentTimeline = async (req, res) => {
         if (!date || !progress || !attendanceStatus || !studentId) {
             return res.status(400).json({ error: 'Please provide all required fields' });
         }
+        // console.log(req);
 
-        if (req.file) {
-            dotenv.config();
-            const s3 = new AWS.S3({
-                accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-                secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-            });
-            const params = {
-                Bucket: process.env.AWS_BUCKET_NAME,
-                Key: `${Date.now()}-${req.file.originalname}`,
-                Body: req.file.buffer,
+        if (req.files) {
+            const s3Key = generateS3Key(req.files[0].originalname);
+            const s3Params = {
+              Bucket: process.env.AWS_BUCKET_NAME,
+              Key: s3Key,
+              Body: req.files[0].buffer,
+              ACL: 'public-read', // Make the file publicly accessible
             };
-            s3.upload(params, async (error, data) => {
-                if (error) {
-                    return res.status(500).json({ error: error.message });
-                }
-                const studentTimeline = await StudentTimeline.create({
-                    date,
-                    progress,
-                    attendanceStatus,
-                    image: data.Location,
-                    StudentId: studentId,
-                });
-                return res.status(201).json({ message: 'Student timeline created successfully', studentTimeline });
+      
+            s3.upload(s3Params, async (error, data) => {
+              if (error) {
+                return res.status(500).json({ error: error.message });
+              }
+              console.log("ENTERED");
+              console.log(data);
+      
+              const studentTimeline = await StudentTimeline.create({
+                date,
+                progress,
+                attendanceStatus,
+                image: data.Location,
+                StudentId: studentId,
+              });
+      
+              return res.status(201).json({ message: 'Student timeline created successfully', studentTimeline });
             });
+          } else {
+            // No image uploaded
+            const studentTimeline = await StudentTimeline.create({
+              date,
+              progress,
+              attendanceStatus,
+              StudentId: studentId,
+            });
+      
+            return res.status(201).json({ message: 'Student timeline created successfully', studentTimeline });
+          }
+        } catch (error) {
+          return res.status(500).json({ error: error.message });
         }
+      };
 
-        const studentTimeline = await StudentTimeline.create({
-            date,
-            progress,
-            attendanceStatus,
-            StudentId: studentId,
-        });
+    // Retrieve Student Timelines by Student ID
+    const getStudentTimelinesByStudentId = async (req, res) => {
+        try {
+            const studentId = req.params.studentId;
 
-        return res.status(201).json({ message: 'Student timeline created successfully', studentTimeline });
-    } catch (error) {
-        return res.status(500).json({ error: error.message });
-    }
-};
+            if (!studentId) {
+                return res.status(400).json({ error: 'Student ID is required' });
+            }
 
-// Retrieve Student Timelines by Student ID
-const getStudentTimelinesByStudentId = async (req, res) => {
-    try {
-        const studentId = req.params.studentId;
+            const studentTimelines = await StudentTimeline.findAll({
+                where: { StudentId: studentId },
+            });
 
-        if (!studentId) {
-            return res.status(400).json({ error: 'Student ID is required' });
+            return res.status(200).json({ studentTimelines });
+        } catch (error) {
+            return res.status(500).json({ error: error.message });
         }
+    };
 
-        const studentTimelines = await StudentTimeline.findAll({
-            where: { StudentId: studentId },
-        });
+    // Update Student Timeline by ID
+    const updateStudentTimeline = async (req, res) => {
+        try {
+            const timelineId = req.params.id;
+            const { date, progress, attendanceStatus } = req.body;
 
-        return res.status(200).json({ studentTimelines });
-    } catch (error) {
-        return res.status(500).json({ error: error.message });
-    }
-};
+            if (!date || !progress || !attendanceStatus) {
+                return res.status(400).json({ error: 'Please provide date, progress, and attendance status' });
+            }
 
-// Update Student Timeline by ID
-const updateStudentTimeline = async (req, res) => {
-    try {
-        const timelineId = req.params.id;
-        const { date, progress, attendanceStatus } = req.body;
+            const studentTimeline = await StudentTimeline.findByPk(timelineId);
 
-        if (!date || !progress || !attendanceStatus) {
-            return res.status(400).json({ error: 'Please provide date, progress, and attendance status' });
+            if (!studentTimeline) {
+                return res.status(404).json({ error: 'Student timeline not found' });
+            }
+
+            studentTimeline.date = date;
+            studentTimeline.progress = progress;
+            studentTimeline.attendanceStatus = attendanceStatus;
+
+            await studentTimeline.save();
+
+            return res.status(200).json({ message: 'Student timeline updated successfully' });
+        } catch (error) {
+            return res.status(500).json({ error: error.message });
         }
+    };
 
-        const studentTimeline = await StudentTimeline.findByPk(timelineId);
+    // Delete Student Timeline by ID
+    const deleteStudentTimeline = async (req, res) => {
+        try {
+            const timelineId = req.params.id;
+            const studentTimeline = await StudentTimeline.findByPk(timelineId);
 
-        if (!studentTimeline) {
-            return res.status(404).json({ error: 'Student timeline not found' });
+            if (!studentTimeline) {
+                return res.status(404).json({ error: 'Student timeline not found' });
+            }
+
+            await studentTimeline.destroy();
+
+            return res.status(200).json({ message: 'Student timeline deleted successfully' });
+        } catch (error) {
+            return res.status(500).json({ error: error.message });
         }
+    };
 
-        studentTimeline.date = date;
-        studentTimeline.progress = progress;
-        studentTimeline.attendanceStatus = attendanceStatus;
-
-        await studentTimeline.save();
-
-        return res.status(200).json({ message: 'Student timeline updated successfully' });
-    } catch (error) {
-        return res.status(500).json({ error: error.message });
-    }
-};
-
-// Delete Student Timeline by ID
-const deleteStudentTimeline = async (req, res) => {
-    try {
-        const timelineId = req.params.id;
-        const studentTimeline = await StudentTimeline.findByPk(timelineId);
-
-        if (!studentTimeline) {
-            return res.status(404).json({ error: 'Student timeline not found' });
-        }
-
-        await studentTimeline.destroy();
-
-        return res.status(200).json({ message: 'Student timeline deleted successfully' });
-    } catch (error) {
-        return res.status(500).json({ error: error.message });
-    }
-};
-
-module.exports = {
-    createStudentTimeline,
-    getStudentTimelinesByStudentId,
-    updateStudentTimeline,
-    deleteStudentTimeline,
-};
+    module.exports = {
+        createStudentTimeline,
+        getStudentTimelinesByStudentId,
+        updateStudentTimeline,
+        deleteStudentTimeline,
+    };
