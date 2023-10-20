@@ -28,12 +28,15 @@ const createClass = async (req, res) => {
 //Retrieve list of all classes
 const getAllClasses = async (req, res) => {
     try {
-        if (!req.admin) {
+        if (!req.admin || !req.teacher) {
             throw new Error('You are not authorized to access this route');
         }
         let classes;
         if (req.admin) {
             classes = await Class.findAll({ where: { SchoolId: req.admin.currentSchool } });
+        }
+        if (req.teacher) {
+            classes = await Class.findAll({ where: { SchoolId: req.teacher.currentSchool } });
         }
         //get teacher school from teacherschool table
 
