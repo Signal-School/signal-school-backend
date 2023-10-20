@@ -31,6 +31,8 @@ const SubjectRoute = require('./routes/subject');
 const AcademicYearRoute = require('./routes/academicYear');
 const ClassRoute = require('./routes/class');
 const StudentSubjectRoute = require('./routes/studentsubject');
+const StudentTimelineRoute = require('./routes/studenttimeline');
+
 
 app.use('/', AuthRoute);
 app.use('/', OrganizationRoute);
@@ -41,6 +43,7 @@ app.use('/', SubjectRoute);
 app.use('/', AcademicYearRoute);
 app.use('/', ClassRoute);
 app.use('/', StudentSubjectRoute);
+app.use('/', StudentTimelineRoute);
 
 
 const PORT = process.env.PORT || 5000;
