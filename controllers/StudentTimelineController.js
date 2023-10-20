@@ -31,7 +31,7 @@ const createStudentTimeline = async (req, res) => {
         if (req.files) {
             const s3Key = generateS3Key(req.files[0].originalname);
             const s3Params = {
-              Bucket: process.env.AWS_BUCKET_NAME,
+              Bucket: "cyclic-thoughtful-lion-visor-us-west-2",
               Key: s3Key,
               Body: req.files[0].buffer,
               ACL: 'public-read', // Make the file publicly accessible
