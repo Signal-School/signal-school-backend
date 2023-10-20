@@ -22,7 +22,8 @@ const teacherLogin = async (req, res) => {
                 name: teacher.name,
                 email: teacher.email,
                 currentSchool: teacher.currentSchool,
-                currentSchoolData: currentSchoolData[0]
+                currentSchoolData: currentSchoolData[0],
+                schools: teacher.Schools
             }
             res.status(200).json({message: 'Login successful', data: data});
         } else {
@@ -64,7 +65,7 @@ const createTeacher = async (req, res) => {
             name: name,
             email: email,
             password: password,
-            currentSchool: req.admin.currentSchool
+            currentSchool: req.admin.currentSchool,
         });
         return res.status(201).json({ message: 'Teacher created successfully', teacher });
 
